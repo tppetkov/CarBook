@@ -2,7 +2,7 @@ import { auth } from "../firebase-config";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "@firebase/auth";
 import { useState } from "react";
 
-const Login = ({ history }) => {
+const Login = () => {
     const [user, setUser] = useState({});
 
     const onLoginFormSubmitHandler = async (e) => {
