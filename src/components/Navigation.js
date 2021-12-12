@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../contexts/AuthContext";
 
 const Navigation = () => {
+    const { user } = useAuthContext();
+
     return (
         <nav className='navbar navbar-expand-lg navbar-light bg-light'>
             <div className='container-fluid'>
@@ -24,16 +27,31 @@ const Navigation = () => {
                                 Home
                             </Link>
                         </li>
-                        <li className='nav-item'>
-                            <Link className='nav-link' to='login'>
-                                Login
-                            </Link>
-                        </li>
-                        <li className='nav-item'>
-                            <Link className='nav-link' to='register'>
-                                Register
-                            </Link>
-                        </li>
+                        {user.isAnonymous ? (
+                            <>
+                                <li className='nav-item'>
+                                    <Link className='nav-link' to='login'>
+                                        Login
+                                    </Link>
+                                </li>
+                                <li className='nav-item'>
+                                    <Link className='nav-link' to='register'>
+                                        Register
+                                    </Link>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li className='nav-item'>
+                                    <span className='nav-link'>{user.email}</span>
+                                </li>
+                                <li className='nav-item'>
+                                    <Link className='nav-link' to='logout'>
+                                        Logout
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>

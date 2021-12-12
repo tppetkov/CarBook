@@ -1,15 +1,17 @@
-import { auth } from "../firebase-config";
-import { onAuthStateChanged, createUserWithEmailAndPassword } from "@firebase/auth";
-import { useState } from "react";
+import { useAuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const Register = ({ history }) => {
-    const onRegisterSubmitHandler = async (e) => {
+const Register = () => {
+    const { register } = useAuthContext();
+    const navigate = useNavigate();
+
+    const onRegisterSubmitHandler = (e) => {
         e.preventDefault();
 
         const username = e.target.username.value;
         const password = e.target.password.value;
 
-        const newUser = await createUserWithEmailAndPassword(auth, username, password);
+        register(username, password).then(navigate("/"));
     };
 
     return (

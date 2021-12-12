@@ -1,20 +1,17 @@
-import { auth } from "../firebase-config";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "@firebase/auth";
-import { useState } from "react";
+import { useAuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const [user, setUser] = useState({});
+    const { login } = useAuthContext();
+    const navigate = useNavigate();
 
-    const onLoginFormSubmitHandler = async (e) => {
+    const onLoginFormSubmitHandler = (e) => {
         e.preventDefault();
 
-        const username = e.target.username.value;
-        const password = e.target.password.value;
+        let username = e.target.username.value;
+        let password = e.target.password.value;
 
-        console.log(username, password);
-
-        const newUser = await signInWithEmailAndPassword(auth, username, password);
-        setUser(newUser);
+        login(username, password).then(navigate("/"));
     };
 
     return (

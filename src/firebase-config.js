@@ -8,7 +8,7 @@ const firebaseConfig = {
     storageBucket: "car-book-d6902.appspot.com",
     messagingSenderId: "963236722930",
     appId: "1:963236722930:web:0df4af2fc4ae388e56786b",
-    measurementId: "${config.measurementId}",
+    measurementId: "G-HMKVVB4QRK",
 };
 
 const app = initializeApp(firebaseConfig);
