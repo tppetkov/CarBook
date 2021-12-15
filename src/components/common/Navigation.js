@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuthContext } from "../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const Navigation = () => {
     const { user } = useAuthContext();
@@ -42,6 +42,11 @@ const Navigation = () => {
                             </>
                         ) : (
                             <>
+                                <li className='nav-item'>
+                                    <Link className='nav-link' to='myvehicles'>
+                                        My Vehicles
+                                    </Link>
+                                </li>
                                 <li className='nav-item'>
                                     <span className='nav-link'>{user.email}</span>
                                 </li>
