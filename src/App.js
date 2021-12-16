@@ -10,9 +10,10 @@ import Register from "./components/Authentication/Register";
 import Logout from "./components/Authentication/Logout";
 import MyVehicles from "./components/Vehicles/MyVehicles";
 import AddVehicle from "./components/Vehicles/AddVehicle";
+import Vehicle from "./components/Vehicles/Vehicle";
 import AddFuel from "./components/FuelReadings/AddFuel";
 
-import "./App.css";
+import "./App.scss";
 
 function App() {
     return (
@@ -30,8 +31,9 @@ function App() {
                                 <Route path='register' element={<Register />} />
                                 <Route path='logout' element={<Logout />} />
                                 <Route path='myvehicles' element={<MyVehicles />} />
+                                <Route path='myvehicles/:vehicleid' element={<Vehicle />} />
                                 <Route path='myvehicles/add' element={<AddVehicle />} />
-                                <Route path='myvehicles/addfuel' element={<AddFuel />} />
+                                <Route path='myvehicles/:vehicleid/addfuel' element={<AddFuel />} />
                             </Routes>
                         </Container>
                     </Container>

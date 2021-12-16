@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { db, auth } from "../../firebase-config";
 import { collection, addDoc } from "firebase/firestore";
 import * as constants from "../../data/Constants";
-import { Form } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-const Add = () => {
+const AddVehicle = () => {
     const [brands, setBrands] = useState([]);
     const [models, setModels] = useState([]);
     const navigate = useNavigate();
@@ -84,4 +84,4 @@ const Add = () => {
     );
 };
 
-export default Add;
+export default AddVehicle;

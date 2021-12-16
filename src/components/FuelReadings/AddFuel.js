@@ -1,13 +1,47 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { db, auth } from "../../firebase-config";
+import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 import { Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 
 const AddFuel = () => {
     const navigate = useNavigate();
+    const params = useParams();
+    let vehicleid = params.vehicleid;
+    const fuelReadingsCollectionRef = collection(db, "fuelReadings");
 
-    const onAddFuelFormSubmitHandler = (e) => {
+    const onAddFuelFormSubmitHandler = async (e) => {
         e.preventDefault();
+        const { odometer, fuel, cost, isfulltank } = e.target;
+        let currentConsumption = null;
+        debugger;
+        if (isfulltank.checked) {
+            let lastReadingDoc = await getLastFuelReading();
+            let lastReading = { ...lastReadingDoc.docs[0].data(), id: lastReadingDoc.docs[0].id };
+            if (lastReading.isfulltank) {
+                currentConsumption = ((odometer.value - lastReading.odometer) / fuel.value).toFixed(3);
+            }
+        }
+        let fuelReading = {
+            odometer: odometer.value,
+            fuel: fuel.value,
+            cost: cost.value,
+            price: (cost.value / fuel.value).toFixed(3),
+            isfulltank: isfulltank.checked,
+            vehicleid: vehicleid,
+            ownerid: auth.currentUser.uid,
+            date: new Date(),
+            consumption: currentConsumption,
+        };
+        console.log(fuelReading);
+        await addDoc(fuelReadingsCollectionRef, fuelReading);
+        navigate(-1);
+    };
+
+    const getLastFuelReading = async () => {
+        let lastFuelReading = query(fuelReadingsCollectionRef, orderBy("date", "desc"), limit(1));
+        return await getDocs(lastFuelReading);
     };
     return (
         <Form onSubmit={onAddFuelFormSubmitHandler}>
@@ -17,20 +51,20 @@ const AddFuel = () => {
             </Form.Group>
             <Form.Group className='mb-3'>
                 <Form.Label>Fuel [l]</Form.Label>
-                <Form.Control type='number' required name='fuel' />
+                <Form.Control type='decimal' required name='fuel' />
             </Form.Group>
             <Form.Group className='mb-3'>
                 <Form.Label>Cost</Form.Label>
-                <Form.Control type='number' required name='cost' />
+                <Form.Control type='decimal' required name='cost' />
             </Form.Group>
             <Form.Group className='mb-3'>
                 <Form.Label>Full Tank</Form.Label>
-                <Form.Check type='checkbox' />
+                <Form.Check type='checkbox' name='isfulltank' />
             </Form.Group>
             <Button variant='primary' type='submit'>
                 Add
             </Button>
-            <Button variant='secondary' className='ms-2' onClick={() => navigate("/myvehicles")}>
+            <Button variant='secondary' className='ms-2' onClick={() => navigate(-1)}>
                 Cancel
             </Button>
         </Form>
