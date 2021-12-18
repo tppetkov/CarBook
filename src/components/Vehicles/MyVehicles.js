@@ -31,9 +31,16 @@ const MyVehicles = () => {
     return (
         <Row>
             <Col md={12}>
-                <h2 className='mt-3'>My Vehicles:</h2>
+                <h2 className='mt-5'>My Vehicles:</h2>
                 {!loading ? (
                     <>
+                        <Button
+                            variant='secondary'
+                            size='lg'
+                            className='mt-3'
+                            onClick={() => navigate("/myvehicles/add")}>
+                            Add new vehicle
+                        </Button>
                         <div className='d-flex flex-row mt-5'>
                             {vehicles.map((x) => (
                                 <Card style={{ width: "18rem" }} className='me-5' key={x.id}>
@@ -52,13 +59,6 @@ const MyVehicles = () => {
                                 </Card>
                             ))}
                         </div>
-                        <Button
-                            variant='secondary'
-                            size='lg'
-                            className='mt-5'
-                            onClick={() => navigate("/myvehicles/add")}>
-                            Add new vehicle
-                        </Button>
                     </>
                 ) : (
                     <Spinner />

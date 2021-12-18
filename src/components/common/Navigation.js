@@ -1,66 +1,49 @@
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import Container from "react-bootstrap/Container";
+import NavDropdown from "react-bootstrap/NavDropdown";
 
 const Navigation = () => {
     const { user } = useAuthContext();
 
     return (
-        <nav className='navbar navbar-expand-lg navbar-light bg-light'>
-            <div className='container-fluid'>
-                <Link className='navbar-brand' to='/'>
+        <Navbar bg='dark' variant='dark'>
+            <Container fluid>
+                <Link to='/' className='navbar-brand'>
                     CarBook
                 </Link>
-                <button
-                    className='navbar-toggler'
-                    type='button'
-                    data-bs-toggle='collapse'
-                    data-bs-target='#navbarSupportedContent'
-                    aria-controls='navbarSupportedContent'
-                    aria-expanded='false'
-                    aria-label='Toggle navigation'>
-                    <span className='navbar-toggler-icon'></span>
-                </button>
-                <div className='collapse navbar-collapse' id='navbarSupportedContent'>
-                    <ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
-                        <li className='nav-item'>
-                            <Link className='nav-link active' aria-current='page' to='/'>
-                                Home
+                <Nav className='ms-auto'>
+                    <Link to='/' className='nav-link'>
+                        Home
+                    </Link>
+                    {user.isAnonymous ? (
+                        <>
+                            <Link to='login' className='nav-link'>
+                                Login
                             </Link>
-                        </li>
-                        {user.isAnonymous ? (
-                            <>
-                                <li className='nav-item'>
-                                    <Link className='nav-link' to='login'>
-                                        Login
-                                    </Link>
-                                </li>
-                                <li className='nav-item'>
-                                    <Link className='nav-link' to='register'>
-                                        Register
-                                    </Link>
-                                </li>
-                            </>
-                        ) : (
-                            <>
-                                <li className='nav-item'>
-                                    <Link className='nav-link' to='myvehicles'>
-                                        My Vehicles
-                                    </Link>
-                                </li>
-                                <li className='nav-item'>
-                                    <span className='nav-link'>{user.email}</span>
-                                </li>
-                                <li className='nav-item'>
-                                    <Link className='nav-link' to='logout'>
+                            <Link to='register' className='nav-link'>
+                                Register
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link className='nav-link' to='myvehicles'>
+                                My Vehicles
+                            </Link>
+                            <NavDropdown title={user.email} id='basic-nav-dropdown'>
+                                <NavDropdown.Item>
+                                    <Link to='logout' className='dropdown-item'>
                                         Logout
                                     </Link>
-                                </li>
-                            </>
-                        )}
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        </>
+                    )}
+                </Nav>
+            </Container>
+        </Navbar>
     );
 };
 

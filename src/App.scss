@@ -1,0 +1,74 @@
+/*Variables*/
+$hc-bg-lightgrey: #f2f2f2;
+
+$hc-text-darkgrey: #7b7b7b;
+
+$hc_green: #008334;
+
+$hc-table-lightgrey: #f8f9fa;
+
+$hc-border-lightgrey: #dee2e6;
+
+$hc-orange: #ec9f18;
+
+$hc-main-text: rgba(0, 0, 0, 0.87);
+
+$hc-row-line-color: #d3d3d3;
+
+$general-font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, "Noto Sans", sans-serif;
+
+$title-subtitle-font: "Syntax Next W02", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+$nav-height: 65px;
+/*Basic styles*/
+html,
+body {
+    font-family: $general-font-family;
+    background-color: $hc-bg-lightgrey;
+    color: $hc-main-text;
+}
+
+.app-header {
+    min-height: $nav-height;
+    background: #282a35;
+    color: #fff;
+
+    .navbar-brand {
+        padding: 5px 20px;
+        font-size: 22px;
+        color: #fff;
+    }
+
+    .navbar-dark {
+        .navbar-nav {
+            .nav-link {
+                font-size: 18px;
+                color: #fff;
+
+                &:hover {
+                    background: #f2f2f2;
+                    color: #282a35;
+                }
+            }
+        }
+    }
+}
+.body-content {
+    background-image: url("../src/images/background.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    .container {
+        min-height: calc(100vh - $nav-height);
+        background-color: #fff;
+        opacity: 0.95;
+    }
+}
+
+fieldset {
+    padding: 25px;
+}
+legend {
+    float: none;
+    padding: 10px 20px;
+}

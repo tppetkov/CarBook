@@ -5,6 +5,8 @@ import { collection, addDoc } from "firebase/firestore";
 import * as constants from "../../data/Constants";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 const AddVehicle = () => {
     const [brands, setBrands] = useState([]);
@@ -36,51 +38,55 @@ const AddVehicle = () => {
     };
 
     return (
-        <Form onSubmit={onAddVehicleFormSubmitHandler}>
-            <Form.Group className='mb-3'>
-                <Form.Label>Brand</Form.Label>
-                <Form.Select aria-label='Select Brand' onChange={onBrandChangeHandler} name='brand'>
-                    <option>Select Brand</option>
-                    {brands.map((x, i) => (
-                        <option value={x} key={i}>
-                            {x}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group className='mb-3'>
-                <Form.Label>Model</Form.Label>
-                <Form.Select aria-label='Select Model' name='model'>
-                    <option>Select Model</option>
-                    {models.map((x, i) => (
-                        <option value={x} key={i}>
-                            {x}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group className='mb-3'>
-                <Form.Label>Year</Form.Label>
-                <Form.Control type='number' required name='year' />
-            </Form.Group>
-            <Form.Group className='mb-3'>
-                <Form.Label>Engine</Form.Label>
-                <Form.Select aria-label='Select Engine' name='engine'>
-                    <option>Select Engine</option>
-                    {constants.engineTypes.map((x, i) => (
-                        <option value={x} key={i}>
-                            {x}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Button variant='primary' type='submit'>
-                Add
-            </Button>
-            <Button variant='secondary' className='ms-2' onClick={() => navigate("/myvehicles")}>
-                Cancel
-            </Button>
-        </Form>
+        <Row>
+            <Col md='12'>
+                <Form onSubmit={onAddVehicleFormSubmitHandler}>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Brand</Form.Label>
+                        <Form.Select aria-label='Select Brand' onChange={onBrandChangeHandler} name='brand'>
+                            <option>Select Brand</option>
+                            {brands.map((x, i) => (
+                                <option value={x} key={i}>
+                                    {x}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Model</Form.Label>
+                        <Form.Select aria-label='Select Model' name='model'>
+                            <option>Select Model</option>
+                            {models.map((x, i) => (
+                                <option value={x} key={i}>
+                                    {x}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Year</Form.Label>
+                        <Form.Control type='number' required name='year' />
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Engine</Form.Label>
+                        <Form.Select aria-label='Select Engine' name='engine'>
+                            <option>Select Engine</option>
+                            {constants.engineTypes.map((x, i) => (
+                                <option value={x} key={i}>
+                                    {x}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                    <Button variant='primary' type='submit'>
+                        Add
+                    </Button>
+                    <Button variant='secondary' className='ms-2' onClick={() => navigate("/myvehicles")}>
+                        Cancel
+                    </Button>
+                </Form>
+            </Col>
+        </Row>
     );
 };
 
