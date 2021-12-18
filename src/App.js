@@ -3,6 +3,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 import Container from "react-bootstrap/Container";
 
+import AuthGuard from "./hoc/AuthGuard";
 import Home from "./components/Home/Home";
 import Navigation from "./components/common/Navigation";
 import Login from "./components/Authentication/Login";
@@ -30,10 +31,38 @@ function App() {
                                 <Route path='login' element={<Login />} />
                                 <Route path='register' element={<Register />} />
                                 <Route path='logout' element={<Logout />} />
-                                <Route path='myvehicles' element={<MyVehicles />} />
-                                <Route path='myvehicles/:vehicleid' element={<Vehicle />} />
-                                <Route path='myvehicles/add' element={<AddVehicle />} />
-                                <Route path='myvehicles/:vehicleid/addfuel' element={<AddFuel />} />
+                                <Route
+                                    path='myvehicles'
+                                    element={
+                                        <AuthGuard>
+                                            <MyVehicles />
+                                        </AuthGuard>
+                                    }
+                                />
+                                <Route
+                                    path='myvehicles/:vehicleid'
+                                    element={
+                                        <AuthGuard>
+                                            <Vehicle />
+                                        </AuthGuard>
+                                    }
+                                />
+                                <Route
+                                    path='myvehicles/add'
+                                    element={
+                                        <AuthGuard>
+                                            <AddVehicle />
+                                        </AuthGuard>
+                                    }
+                                />
+                                <Route
+                                    path='myvehicles/:vehicleid/addfuel'
+                                    element={
+                                        <AuthGuard>
+                                            <AddFuel />
+                                        </AuthGuard>
+                                    }
+                                />
                             </Routes>
                         </Container>
                     </Container>

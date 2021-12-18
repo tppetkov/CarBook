@@ -19,7 +19,9 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(initialAuthState);
 
     onAuthStateChanged(auth, (currentUser) => {
-        currentUser ? setUser(currentUser) : setUser(initialAuthState);
+        if (currentUser) {
+            setUser(currentUser);
+        }
     });
 
     const register = async (username, password) => {
