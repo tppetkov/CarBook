@@ -3,7 +3,6 @@ import { useAuthContext } from "../contexts/AuthContext";
 
 const AuthGuard = ({ children }) => {
     const { user } = useAuthContext();
-
     return !user.isAnonymous ? children : <Navigate to='/login' />;
 };
 

@@ -33,11 +33,9 @@ const Navigation = () => {
                                 My Vehicles
                             </Link>
                             <NavDropdown title={user.email} id='basic-nav-dropdown'>
-                                <NavDropdown.Item>
-                                    <Link to='logout' className='dropdown-item'>
-                                        Logout
-                                    </Link>
-                                </NavDropdown.Item>
+                                <Link to='logout' className='dropdown-item'>
+                                    Logout
+                                </Link>
                             </NavDropdown>
                         </>
                     )}

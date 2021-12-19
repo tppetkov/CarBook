@@ -9,13 +9,18 @@ const Login = () => {
     const { login } = useAuthContext();
     const navigate = useNavigate();
 
-    const loginSubmitHandler = (e) => {
-        e.preventDefault();
+    const loginSubmitHandler = async (e) => {
+        try {
+            e.preventDefault();
 
-        let email = e.target.email.value;
-        let password = e.target.password.value;
+            let email = e.target.email.value;
+            let password = e.target.password.value;
 
-        login(email, password).then(navigate("/"));
+            await login(email, password);
+            navigate("/");
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     return (

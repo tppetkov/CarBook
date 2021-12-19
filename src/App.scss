@@ -65,10 +65,19 @@ body {
     }
 }
 
+.h1 {
+    font-size: 44px;
+    font-weight: 900;
+}
+
 fieldset {
     padding: 25px;
 }
 legend {
     float: none;
     padding: 10px 20px;
+}
+
+.greybox {
+    background-color: $hc-bg-lightgrey;
 }

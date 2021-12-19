@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { auth } from "../firebase-config";
+import useLocalStorage from "../hooks/useLocalStorage";
 import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
@@ -16,29 +17,17 @@ const initialAuthState = {
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(initialAuthState);
+    const [user, setUser] = useLocalStorage("user", initialAuthState);
 
-    onAuthStateChanged(auth, (currentUser) => {
-        if (currentUser) {
-            setUser(currentUser);
-        }
-    });
+    useEffect(() => {
+        return onAuthStateChanged(auth, (currentUser) => {
+            currentUser ? setUser(currentUser) : setUser(initialAuthState);
+        });
+    }, [setUser]);
 
-    const register = async (username, password) => {
-        try {
-            await createUserWithEmailAndPassword(auth, username, password);
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    const register = async (username, password) => await createUserWithEmailAndPassword(auth, username, password);
 
-    const login = async (username, password) => {
-        try {
-            await signInWithEmailAndPassword(auth, username, password);
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    const login = async (username, password) => await signInWithEmailAndPassword(auth, username, password);
 
     const logout = async () => {
         try {
