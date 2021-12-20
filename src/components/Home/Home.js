@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import * as api from "../../services/statisticsService";
 import SearchBox from "./SearchBox";
 
 import Row from "react-bootstrap/Row";
@@ -5,6 +7,12 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 
 const Home = () => {
+    const [statistics, setStatistics] = useState({});
+
+    useEffect(() => {
+        api.getGeneralStatistics().then((result) => setStatistics(result));
+    }, []);
+
     return (
         <Row>
             <Col md='9'>
@@ -22,10 +30,10 @@ const Home = () => {
                         <Card.Title>Our database</Card.Title>
                         <div>
                             <ul>
-                                <li>Total vehicles: 225</li>
-                                <li>Total fuel readings: 5600</li>
-                                <li>Total fuel ups: 50600</li>
-                                <li>Total km: 10600</li>
+                                <li>Total vehicles: {statistics?.vehicles}</li>
+                                <li>Total fuel readings: {statistics?.fuelReadings}</li>
+                                <li>Total fuel ups: {statistics?.totalfuel}</li>
+                                <li>Total km: {statistics?.totalkm}</li>
                             </ul>
                         </div>
                     </Card.Body>

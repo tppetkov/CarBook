@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 
 import * as api from "../../services/fuelService";
+import * as statistics from "../../services/statisticsService";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -18,6 +19,7 @@ const AddFuel = () => {
         e.preventDefault();
         const { odometer, fuel, cost, isfulltank } = e.target;
         await api.addFuel(odometer.value, fuel.value, cost.value, isfulltank.checked, vehicleid, user.uid);
+        await statistics.updateFuelReadingsStatistics(fuel.value);
         navigate(-1);
     };
 

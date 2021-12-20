@@ -14,3 +14,14 @@ export const getMyVehicles = async (userid) => {
 export const addVehicle = async (brand, model, year, engine, ownerid) => {
     await addDoc(vehiclesCollectionRef, { brand: brand, model: model, year: year, engine: engine, owner: ownerid });
 };
+
+export const search = async (brand, model) => {
+    const searchVehicles =
+        model !== ""
+            ? query(vehiclesCollectionRef, where("brand", "==", brand), where("model", "==", model))
+            : query(vehiclesCollectionRef, where("brand", "==", brand));
+    let vehichleDocs = await getDocs(searchVehicles);
+    let vehiclesResult = vehichleDocs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+
+    return vehiclesResult;
+};

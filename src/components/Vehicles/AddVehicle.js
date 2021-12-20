@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 
 import * as api from "../../services/vehicleService";
+import * as statistics from "../../services/statisticsService";
+
 import * as constants from "../../data/Constants";
 
 import Form from "react-bootstrap/Form";
@@ -25,6 +27,7 @@ const AddVehicle = () => {
         e.preventDefault();
         const { brand, model, year, engine } = e.target;
         await api.addVehicle(brand.value, model.value, year.value, engine.value, user.uid);
+        await statistics.updateVehicleStatistics();
         navigate(-1);
     };
 

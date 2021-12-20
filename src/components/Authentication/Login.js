@@ -47,9 +47,7 @@ const Login = () => {
                             <Form.Control.Feedback type='invalid' style={{ display: "block" }}>
                                 {error.message}
                             </Form.Control.Feedback>
-                        ) : (
-                            ""
-                        )}
+                        ) : null}
 
                         <Button variant='primary' type='submit' className='mt-3'>
                             Sign In
