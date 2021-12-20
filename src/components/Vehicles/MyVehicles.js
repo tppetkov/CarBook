@@ -36,9 +36,9 @@ const MyVehicles = () => {
                             onClick={() => navigate("/myvehicles/add")}>
                             Add new vehicle
                         </Button>
-                        <div className='d-flex flex-row mt-5'>
+                        <div className='d-flex flex-row flex-wrap mt-3'>
                             {vehicles.map((x) => (
-                                <Card style={{ width: "18rem" }} className='me-5' key={x.id}>
+                                <Card style={{ width: "18rem" }} className='me-5 mt-3' key={x.id}>
                                     <Card.Body>
                                         <Card.Title>
                                             {x.brand} - {x.model}

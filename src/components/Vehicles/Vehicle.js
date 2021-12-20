@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import * as api from "../../services/fuelService";
+import * as fuelApi from "../../services/fuelService";
+import * as vehicleApi from "../../services/vehicleService";
 
 import Spinner from "../common/Spinner";
 import EditFuel from "../FuelReadings/EditFuel";
@@ -9,8 +10,10 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
+import Badge from "react-bootstrap/Badge";
 
 const Vehicle = () => {
+    const [currentVehicle, setCurrentVehicle] = useState({});
     const [fuelReadings, setFuelReadings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
@@ -21,7 +24,8 @@ const Vehicle = () => {
     let vehicleid = params.vehicleid;
 
     useEffect(() => {
-        api.getFuelReadingsByVehicle(vehicleid).then((result) => {
+        vehicleApi.getVehicleById(vehicleid).then((result) => setCurrentVehicle(result));
+        fuelApi.getFuelReadingsByVehicle(vehicleid).then((result) => {
             setFuelReadings(result.sort((a, b) => b.odometer - a.odometer));
             setLoading(false);
         });
@@ -33,14 +37,14 @@ const Vehicle = () => {
     };
 
     const onDeleteHandler = async (id) => {
-        await api.deleteFuel(id);
+        await fuelApi.deleteFuel(id);
         setFuelReadings([...fuelReadings].filter((x) => x.id !== id));
     };
 
     const onEditFuelFormHandler = async (e, id) => {
         e.preventDefault();
         const { odometer, fuel, cost, isfulltank } = e.target;
-        await api.editFuel(id, odometer.value, fuel.value, cost.value, isfulltank.checked);
+        await fuelApi.editFuel(id, odometer.value, fuel.value, cost.value, isfulltank.checked);
         let updatedFuelReadings = [...fuelReadings].map((x) =>
             x.id === id
                 ? { ...x, odometer: odometer.value, fuel: fuel.value, cost: cost.value, isfulltank: isfulltank.checked }
@@ -54,7 +58,21 @@ const Vehicle = () => {
     return (
         <Row>
             <Col md={12}>
-                <h2 className='mt-5'>Fuel Readings:</h2>
+                <div className='mt-5 car-stats greybox'>
+                    <h3>
+                        {currentVehicle.brand} - {currentVehicle.model}
+                        <Badge bg='secondary' className='ms-3'>
+                            {currentVehicle?.consumption} L/km
+                        </Badge>
+                        <Badge bg='secondary' className='ms-3'>
+                            {currentVehicle?.totalCost} km
+                        </Badge>
+                        <Badge bg='secondary' className='ms-3'>
+                            {currentVehicle?.totalFuel} $
+                        </Badge>
+                    </h3>
+                </div>
+                <h2 className='mt-3'>Fuel Readings:</h2>
                 {!loading ? (
                     <>
                         <Button variant='primary' size='lg' className='mt-3' onClick={() => navigate("addfuel")}>

@@ -37,13 +37,14 @@ export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid, useri
     };
     await addDoc(fuelReadingsCollectionRef, fuelReading);
 
-    if (fuelReading.consumption) {
-        let vehicleToUpdate = {
-            vehicleid: fuelReading.vehicleid,
-            consumption: fuelReading.consumption,
-        };
-        await updateVehicle(vehicleToUpdate);
-    }
+    let vehicleToUpdate = {
+        vehicleid: fuelReading.vehicleid,
+        consumption: fuelReading.consumption,
+        fuel: fuelReading.fuel,
+        cost: fuelReading.cost,
+    };
+
+    await updateVehicle(vehicleToUpdate);
 };
 
 const getLastFuelReading = async () => {

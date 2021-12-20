@@ -1,5 +1,5 @@
 import { db } from "../firebase-config";
-import { collection, addDoc, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
 
 const vehiclesCollectionRef = collection(db, "vehicles");
 
@@ -27,6 +27,24 @@ export const search = async (brand, model) => {
 };
 
 export const updateVehicle = async (vehicle) => {
+    let previousState = await getVehicleById(vehicle.vehicleid);
     const vehicleDoc = doc(db, "vehicles", vehicle.vehicleid);
-    await updateDoc(vehicleDoc, { consumption: vehicle.consumption });
+    let propertiesForUpdate = {
+        totalFuel: parseInt(previousState.totalFuel) + parseInt(vehicle.fuel),
+        totalCost: parseInt(previousState.totalCost) + parseInt(vehicle.cost),
+    };
+
+    if (vehicle.consumption) {
+        propertiesForUpdate.consumption = parseInt(vehicle.consumption);
+    }
+
+    await updateDoc(vehicleDoc, propertiesForUpdate);
+};
+
+export const getVehicleById = async (id) => {
+    let vehicleRef = doc(db, "vehicles", id);
+    let vehicleDoc = await getDoc(vehicleRef);
+    let vehicle = vehicleDoc.data();
+
+    return vehicle;
 };
