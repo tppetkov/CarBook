@@ -1,8 +1,9 @@
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 
-import * as api from "../../services/fuelService";
-import * as statistics from "../../services/statisticsService";
+import * as fuelApi from "../../services/fuelService";
+import * as statisticsApi from "../../services/statisticsService";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -10,17 +11,46 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 const AddFuel = () => {
+    const [previousReading, setPreviousReading] = useState({});
+    const [distance, setDistance] = useState(0);
+    const [error, setError] = useState({});
     const navigate = useNavigate();
     const params = useParams();
     const { user } = useAuthContext();
     let vehicleid = params.vehicleid;
 
+    useEffect(() => {
+        fuelApi.getLastFuelReading().then((result) => setPreviousReading(result));
+    }, []);
+
     const onAddFuelFormSubmitHandler = async (e) => {
         e.preventDefault();
+        if (error) {
+            return;
+        }
         const { odometer, fuel, cost, isfulltank } = e.target;
-        await api.addFuel(odometer.value, fuel.value, cost.value, isfulltank.checked, vehicleid, user.uid);
-        await statistics.updateFuelReadingsStatistics(fuel.value);
+        await fuelApi.addFuel(
+            odometer.value,
+            distance,
+            fuel.value,
+            cost.value,
+            isfulltank.checked,
+            vehicleid,
+            user.uid
+        );
+        await statisticsApi.updateFuelReadingsStatistics(fuel.value, distance);
         navigate(-1);
+    };
+
+    const calculateDistance = (e) => {
+        setError(null);
+        let currentOdometer = e.target.value;
+        let currentDistance = currentOdometer - previousReading.odometer;
+
+        setDistance(currentDistance);
+        if (currentDistance <= 0) {
+            setError({ message: "You have enter an invalid odometer value!" });
+        }
     };
 
     return (
@@ -29,8 +59,17 @@ const AddFuel = () => {
                 <Form onSubmit={onAddFuelFormSubmitHandler}>
                     <Form.Group className='mb-3'>
                         <Form.Label>OdoMeter</Form.Label>
-                        <Form.Control type='number' required name='odometer' />
+                        <Form.Control type='number' required name='odometer' onBlur={calculateDistance} />
                     </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Distance</Form.Label>
+                        <Form.Control type='number' disabled value={distance} />
+                    </Form.Group>
+                    {error ? (
+                        <Form.Control.Feedback type='invalid' style={{ display: "block" }}>
+                            {error.message}
+                        </Form.Control.Feedback>
+                    ) : null}
                     <Form.Group className='mb-3'>
                         <Form.Label>Fuel [l]</Form.Label>
                         <Form.Control type='decimal' required name='fuel' />

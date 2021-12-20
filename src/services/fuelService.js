@@ -15,13 +15,12 @@ import { updateVehicle } from "./vehicleService";
 
 const fuelReadingsCollectionRef = collection(db, "fuelReadings");
 
-export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid, userid) => {
+export const addFuel = async (odometer, fuel, cost, distance, isfulltank, vehicleid, userid) => {
     let currentConsumption = null;
     if (isfulltank) {
         let lastReadingDoc = await getLastFuelReading();
-        let lastReading = { ...lastReadingDoc.docs[0].data(), id: lastReadingDoc.docs[0].id };
-        if (lastReading.isfulltank) {
-            currentConsumption = ((odometer - lastReading.odometer) / fuel).toFixed(3);
+        if (lastReadingDoc.isfulltank) {
+            currentConsumption = ((odometer - lastReadingDoc.odometer) / fuel).toFixed(3);
         }
     }
     let fuelReading = {
@@ -34,6 +33,7 @@ export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid, useri
         ownerid: userid,
         date: new Date(),
         consumption: currentConsumption,
+        distance: parseInt(distance),
     };
     await addDoc(fuelReadingsCollectionRef, fuelReading);
 
@@ -47,9 +47,12 @@ export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid, useri
     await updateVehicle(vehicleToUpdate);
 };
 
-const getLastFuelReading = async () => {
+export const getLastFuelReading = async () => {
     let lastFuelReading = query(fuelReadingsCollectionRef, orderBy("date", "desc"), limit(1));
-    return await getDocs(lastFuelReading);
+    let lastReadingDoc = await getDocs(lastFuelReading);
+    let lastReading = { ...lastReadingDoc.docs[0].data(), id: lastReadingDoc.docs[0].id };
+
+    return lastReading;
 };
 
 export const editFuel = async (id, odometer, fuel, cost, isfulltank) => {

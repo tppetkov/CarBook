@@ -16,11 +16,12 @@ export const updateVehicleStatistics = async () => {
     await updateDoc(statisticsDoc, newVehicle);
 };
 
-export const updateFuelReadingsStatistics = async (fuel) => {
+export const updateFuelReadingsStatistics = async (fuel, distance) => {
     let previousState = await getGeneralStatistics();
     const newFuel = {
         totalfuel: previousState.totalfuel + parseInt(fuel),
         fuelReadings: previousState.fuelReadings + 1,
+        totalkm: previousState.totalkm + parseInt(distance),
     };
     await updateDoc(statisticsDoc, newFuel);
 };
