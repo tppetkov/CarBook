@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { db } from "../../firebase-config";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import * as api from "../../services/fuelService";
 
 import Spinner from "../common/Spinner";
@@ -23,18 +21,8 @@ const Vehicle = () => {
     let vehicleid = params.vehicleid;
 
     useEffect(() => {
-        const fuelReadingsCollectionRef = collection(db, "fuelReadings");
-        const getReadingsPerVehicle = query(fuelReadingsCollectionRef, where("vehicleid", "==", vehicleid));
-
-        getDocs(getReadingsPerVehicle).then((response) => {
-            let result = response.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            let initialFuelReadings = [...result]
-                .map((x) => {
-                    return { ...x, date: x.date.toDate() };
-                })
-                .sort((a, b) => b.date - a.date);
-
-            setFuelReadings(initialFuelReadings);
+        api.getFuelReadingsByVehicle(vehicleid).then((result) => {
+            setFuelReadings(result.sort((a, b) => b.odometer - a.odometer));
             setLoading(false);
         });
     }, [vehicleid]);
@@ -58,7 +46,7 @@ const Vehicle = () => {
                 ? { ...x, odometer: odometer.value, fuel: fuel.value, cost: cost.value, isfulltank: isfulltank.checked }
                 : x
         );
-        setFuelReadings(updatedFuelReadings);
+        setFuelReadings(updatedFuelReadings.sort((a, b) => b.odometer - a.odometer));
         handleClose();
     };
     const handleClose = () => setShow(false);

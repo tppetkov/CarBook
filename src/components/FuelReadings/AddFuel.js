@@ -1,4 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuthContext } from "../../contexts/AuthContext";
+
 import * as api from "../../services/fuelService";
 
 import Form from "react-bootstrap/Form";
@@ -9,12 +11,13 @@ import Col from "react-bootstrap/Col";
 const AddFuel = () => {
     const navigate = useNavigate();
     const params = useParams();
+    const { user } = useAuthContext();
     let vehicleid = params.vehicleid;
 
     const onAddFuelFormSubmitHandler = async (e) => {
         e.preventDefault();
         const { odometer, fuel, cost, isfulltank } = e.target;
-        await api.addFuel(odometer.value, fuel.value, cost.value, isfulltank.checked, vehicleid);
+        await api.addFuel(odometer.value, fuel.value, cost.value, isfulltank.checked, vehicleid, user.uid);
         navigate(-1);
     };
 

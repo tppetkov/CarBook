@@ -1,9 +1,20 @@
-import { db, auth } from "../firebase-config";
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { db } from "../firebase-config";
+import {
+    collection,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    getDocs,
+    query,
+    where,
+    orderBy,
+    limit,
+} from "firebase/firestore";
 
 const fuelReadingsCollectionRef = collection(db, "fuelReadings");
 
-export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid) => {
+export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid, userid) => {
     let currentConsumption = null;
     if (isfulltank) {
         let lastReadingDoc = await getLastFuelReading();
@@ -19,7 +30,7 @@ export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid) => {
         price: (cost / fuel).toFixed(3),
         isfulltank: isfulltank,
         vehicleid: vehicleid,
-        ownerid: auth.currentUser.uid,
+        ownerid: userid,
         date: new Date(),
         consumption: currentConsumption,
     };
@@ -40,4 +51,16 @@ export const editFuel = async (id, odometer, fuel, cost, isfulltank) => {
 export const deleteFuel = async (id) => {
     const fuelDoc = doc(db, "fuelReadings", id);
     await deleteDoc(fuelDoc);
+};
+
+export const getFuelReadingsByVehicle = async (vehicleid) => {
+    const getReadingsPerVehicle = query(fuelReadingsCollectionRef, where("vehicleid", "==", vehicleid));
+
+    let fuelDocs = await getDocs(getReadingsPerVehicle);
+    let result = fuelDocs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    let initialFuelReadings = [...result].map((x) => {
+        return { ...x, date: x.date.toDate() };
+    });
+
+    return initialFuelReadings;
 };

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase-config";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuthContext } from "../../contexts/AuthContext";
+import * as api from "../../services/vehicleService";
 
 import Spinner from "../common/Spinner";
 
@@ -18,15 +17,11 @@ const MyVehicles = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!user.isAnonymous) {
-            const vehiclesCollectionRef = collection(db, "vehicles");
-            const getMyVehicles = query(vehiclesCollectionRef, where("owner", "==", user.uid));
-            getDocs(getMyVehicles).then((response) => {
-                setVehicles(response.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-                setLoading(false);
-            });
-        }
-    }, [user]);
+        api.getMyVehicles(user.uid).then((response) => {
+            setVehicles(response);
+            setLoading(false);
+        });
+    }, [user.uid]);
 
     return (
         <Row>
@@ -44,7 +39,6 @@ const MyVehicles = () => {
                         <div className='d-flex flex-row mt-5'>
                             {vehicles.map((x) => (
                                 <Card style={{ width: "18rem" }} className='me-5' key={x.id}>
-                                    {/* <Card.Img variant='top' src='holder.js/100px180' /> */}
                                     <Card.Body>
                                         <Card.Title>
                                             {x.brand} - {x.model}
