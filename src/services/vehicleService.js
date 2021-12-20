@@ -1,5 +1,5 @@
 import { db } from "../firebase-config";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
 
 const vehiclesCollectionRef = collection(db, "vehicles");
 
@@ -24,4 +24,9 @@ export const search = async (brand, model) => {
     let vehiclesResult = vehichleDocs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 
     return vehiclesResult;
+};
+
+export const updateVehicle = async (vehicle) => {
+    const vehicleDoc = doc(db, "vehicles", vehicle.vehicleid);
+    await updateDoc(vehicleDoc, { consumption: vehicle.consumption });
 };

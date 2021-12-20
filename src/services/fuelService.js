@@ -11,6 +11,7 @@ import {
     orderBy,
     limit,
 } from "firebase/firestore";
+import { updateVehicle } from "./vehicleService";
 
 const fuelReadingsCollectionRef = collection(db, "fuelReadings");
 
@@ -35,6 +36,14 @@ export const addFuel = async (odometer, fuel, cost, isfulltank, vehicleid, useri
         consumption: currentConsumption,
     };
     await addDoc(fuelReadingsCollectionRef, fuelReading);
+
+    if (fuelReading.consumption) {
+        let vehicleToUpdate = {
+            vehicleid: fuelReading.vehicleid,
+            consumption: fuelReading.consumption,
+        };
+        await updateVehicle(vehicleToUpdate);
+    }
 };
 
 const getLastFuelReading = async () => {
