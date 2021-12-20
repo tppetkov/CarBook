@@ -19,7 +19,7 @@ export const updateVehicleStatistics = async () => {
 export const updateFuelReadingsStatistics = async (fuel, distance) => {
     let previousState = await getGeneralStatistics();
     const newFuel = {
-        totalfuel: previousState.totalfuel + parseInt(fuel),
+        totalfuel: previousState.totalfuel + parseFloat(fuel),
         fuelReadings: previousState.fuelReadings + 1,
         totalkm: previousState.totalkm + parseInt(distance),
     };

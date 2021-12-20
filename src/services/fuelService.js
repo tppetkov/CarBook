@@ -15,12 +15,12 @@ import { updateVehicle } from "./vehicleService";
 
 const fuelReadingsCollectionRef = collection(db, "fuelReadings");
 
-export const addFuel = async (odometer, fuel, cost, distance, isfulltank, vehicleid, userid) => {
+export const addFuel = async (odometer, distance, fuel, cost, isfulltank, vehicleid, userid) => {
     let currentConsumption = null;
     if (isfulltank) {
-        let lastReadingDoc = await getLastFuelReading();
-        if (lastReadingDoc.isfulltank) {
-            currentConsumption = ((odometer - lastReadingDoc.odometer) / fuel).toFixed(3);
+        let lastReadingDoc = await getLastFuelReadingByVehicle(vehicleid);
+        if (lastReadingDoc?.isfulltank) {
+            currentConsumption = ((fuel * 100) / (odometer - lastReadingDoc.odometer)).toFixed(3);
         }
     }
     let fuelReading = {
@@ -47,12 +47,20 @@ export const addFuel = async (odometer, fuel, cost, distance, isfulltank, vehicl
     await updateVehicle(vehicleToUpdate);
 };
 
-export const getLastFuelReading = async () => {
-    let lastFuelReading = query(fuelReadingsCollectionRef, orderBy("date", "desc"), limit(1));
+export const getLastFuelReadingByVehicle = async (vehicleid) => {
+    let lastFuelReading = query(
+        fuelReadingsCollectionRef,
+        where("vehicleid", "==", vehicleid),
+        orderBy("date", "desc"),
+        limit(1)
+    );
     let lastReadingDoc = await getDocs(lastFuelReading);
-    let lastReading = { ...lastReadingDoc.docs[0].data(), id: lastReadingDoc.docs[0].id };
-
-    return lastReading;
+    if (lastReadingDoc.docs.length > 0) {
+        let lastReading = { ...lastReadingDoc.docs[0].data(), id: lastReadingDoc.docs[0].id };
+        return lastReading;
+    } else {
+        return null;
+    }
 };
 
 export const editFuel = async (id, odometer, fuel, cost, isfulltank) => {
@@ -70,10 +78,14 @@ export const getFuelReadingsByVehicle = async (vehicleid) => {
     const getReadingsPerVehicle = query(fuelReadingsCollectionRef, where("vehicleid", "==", vehicleid));
 
     let fuelDocs = await getDocs(getReadingsPerVehicle);
-    let result = fuelDocs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    let initialFuelReadings = [...result].map((x) => {
-        return { ...x, date: x.date.toDate() };
-    });
+    if (fuelDocs.docs.length > 0) {
+        let result = fuelDocs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        let initialFuelReadings = [...result].map((x) => {
+            return { ...x, date: x.date.toDate() };
+        });
 
-    return initialFuelReadings;
+        return initialFuelReadings;
+    } else {
+        return null;
+    }
 };

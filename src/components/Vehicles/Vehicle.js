@@ -26,7 +26,9 @@ const Vehicle = () => {
     useEffect(() => {
         vehicleApi.getVehicleById(vehicleid).then((result) => setCurrentVehicle(result));
         fuelApi.getFuelReadingsByVehicle(vehicleid).then((result) => {
-            setFuelReadings(result.sort((a, b) => b.odometer - a.odometer));
+            if (result) {
+                setFuelReadings(result.sort((a, b) => b.odometer - a.odometer));
+            }
             setLoading(false);
         });
     }, [vehicleid]);
@@ -65,10 +67,10 @@ const Vehicle = () => {
                             {currentVehicle?.consumption} L/km
                         </Badge>
                         <Badge bg='secondary' className='ms-3'>
-                            {currentVehicle?.totalCost} km
+                            {currentVehicle?.totalFuel} L
                         </Badge>
                         <Badge bg='secondary' className='ms-3'>
-                            {currentVehicle?.totalFuel} $
+                            {currentVehicle?.totalCost} $
                         </Badge>
                     </h3>
                 </div>

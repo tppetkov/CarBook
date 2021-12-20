@@ -12,7 +12,15 @@ export const getMyVehicles = async (userid) => {
 };
 
 export const addVehicle = async (brand, model, year, engine, ownerid) => {
-    await addDoc(vehiclesCollectionRef, { brand: brand, model: model, year: year, engine: engine, owner: ownerid });
+    await addDoc(vehiclesCollectionRef, {
+        brand: brand,
+        model: model,
+        year: year,
+        engine: engine,
+        owner: ownerid,
+        totalFuel: 0,
+        totalCost: 0,
+    });
 };
 
 export const search = async (brand, model) => {
@@ -30,12 +38,12 @@ export const updateVehicle = async (vehicle) => {
     let previousState = await getVehicleById(vehicle.vehicleid);
     const vehicleDoc = doc(db, "vehicles", vehicle.vehicleid);
     let propertiesForUpdate = {
-        totalFuel: parseInt(previousState.totalFuel) + parseInt(vehicle.fuel),
-        totalCost: parseInt(previousState.totalCost) + parseInt(vehicle.cost),
+        totalFuel: parseFloat(previousState.totalFuel) + parseFloat(vehicle.fuel),
+        totalCost: parseFloat(previousState.totalCost) + parseFloat(vehicle.cost),
     };
 
     if (vehicle.consumption) {
-        propertiesForUpdate.consumption = parseInt(vehicle.consumption);
+        propertiesForUpdate.consumption = parseFloat(vehicle.consumption);
     }
 
     await updateDoc(vehicleDoc, propertiesForUpdate);

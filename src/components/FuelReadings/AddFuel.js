@@ -20,8 +20,8 @@ const AddFuel = () => {
     let vehicleid = params.vehicleid;
 
     useEffect(() => {
-        fuelApi.getLastFuelReading().then((result) => setPreviousReading(result));
-    }, []);
+        fuelApi.getLastFuelReadingByVehicle(vehicleid).then((result) => setPreviousReading(result));
+    }, [vehicleid]);
 
     const onAddFuelFormSubmitHandler = async (e) => {
         e.preventDefault();
@@ -45,11 +45,13 @@ const AddFuel = () => {
     const calculateDistance = (e) => {
         setError(null);
         let currentOdometer = e.target.value;
-        let currentDistance = currentOdometer - previousReading.odometer;
+        if (Object.entries(previousReading).length > 0) {
+            let currentDistance = currentOdometer - previousReading.odometer;
 
-        setDistance(currentDistance);
-        if (currentDistance <= 0) {
-            setError({ message: "You have enter an invalid odometer value!" });
+            setDistance(currentDistance);
+            if (currentDistance <= 0) {
+                setError({ message: "You have enter an invalid odometer value!" });
+            }
         }
     };
 
