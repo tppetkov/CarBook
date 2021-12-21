@@ -3,7 +3,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 import Container from "react-bootstrap/Container";
 
-import AuthGuard from "./hoc/AuthGuard";
+import AuthGuard from "./hoc/АuthGuard";
 import Home from "./components/Home/Home";
 import Navigation from "./components/common/Navigation";
 import Login from "./components/Authentication/Login";

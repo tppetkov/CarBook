@@ -15,6 +15,7 @@ import Col from "react-bootstrap/Col";
 const AddVehicle = () => {
     const [brands, setBrands] = useState([]);
     const [models, setModels] = useState([]);
+    const [error, setError] = useState({});
     const navigate = useNavigate();
     const { user } = useAuthContext();
 
@@ -25,6 +26,9 @@ const AddVehicle = () => {
 
     const onAddVehicleFormSubmitHandler = async (e) => {
         e.preventDefault();
+        if (error) {
+            return;
+        }
         const { brand, model, year, engine } = e.target;
         await api.addVehicle(brand.value, model.value, year.value, engine.value, user.uid);
         await statistics.updateVehicleStatistics();
@@ -37,14 +41,22 @@ const AddVehicle = () => {
         setModels(modelsByBrand);
     };
 
+    const checkNumber = (e) => {
+        setError({});
+        let value = parseInt(e.target.value);
+        if (isNaN(value) || value < 1900 || value > 2022) {
+            setError({ message: "Please enter valid year!" });
+        }
+    };
+
     return (
         <Row>
             <Col md='6'>
                 <Form onSubmit={onAddVehicleFormSubmitHandler} className='add-vehicle-form mt-5'>
                     <Form.Group className='mb-3'>
                         <Form.Label>Brand</Form.Label>
-                        <Form.Select aria-label='Select Brand' onChange={onBrandChangeHandler} name='brand'>
-                            <option>Select Brand</option>
+                        <Form.Select aria-label='Select Brand' onChange={onBrandChangeHandler} name='brand' required>
+                            <option value=''>Select Brand</option>
                             {brands.map((x, i) => (
                                 <option value={x} key={i}>
                                     {x}
@@ -55,7 +67,7 @@ const AddVehicle = () => {
                     <Form.Group className='mb-3'>
                         <Form.Label>Model</Form.Label>
                         <Form.Select aria-label='Select Model' name='model'>
-                            <option>Select Model</option>
+                            <option value=''>Select Model</option>
                             {models.map((x, i) => (
                                 <option value={x} key={i}>
                                     {x}
@@ -65,8 +77,13 @@ const AddVehicle = () => {
                     </Form.Group>
                     <Form.Group className='mb-3'>
                         <Form.Label>Year</Form.Label>
-                        <Form.Control type='number' required name='year' />
+                        <Form.Control type='number' required name='year' onBlur={checkNumber} />
                     </Form.Group>
+                    {error ? (
+                        <Form.Control.Feedback type='invalid' style={{ display: "block" }}>
+                            {error.message}
+                        </Form.Control.Feedback>
+                    ) : null}
                     <Form.Group className='mb-3'>
                         <Form.Label>Engine</Form.Label>
                         <Form.Select aria-label='Select Engine' name='engine'>
