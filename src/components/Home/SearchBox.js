@@ -31,7 +31,6 @@ const SearchBox = () => {
         }
         setLoading(true);
         let results = await vehicleApi.search(brand.value, model.value);
-        console.log(results);
         setSearchResults(results);
         setLoading(false);
     };
@@ -90,8 +89,8 @@ const SearchBox = () => {
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Model</th>
                                 <th>Brand</th>
+                                <th>Model</th>
                                 <th>Year</th>
                                 <th>Engine</th>
                                 <th>Average consumption</th>
@@ -101,8 +100,8 @@ const SearchBox = () => {
                             {searchResults.map((x, i) => (
                                 <tr key={x.id}>
                                     <td>{i}</td>
-                                    <td>{x.model}</td>
                                     <td>{x.brand}</td>
+                                    <td>{x.model}</td>
                                     <td>{x.year}</td>
                                     <td>{x.engine}</td>
                                     <td>{x.consumption}</td>

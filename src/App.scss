@@ -82,9 +82,14 @@ legend {
     background-color: $hc-bg-lightgrey;
 }
 
-.btn-primary {
+.btn.btn-primary {
     background-color: #212529;
     border-color: #212529;
+    &:hover {
+        color: #212529;
+        background-color: #fff;
+        border-color: #212529;
+    }
 }
 
 .car-stats {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
-import * as api from "../../services/vehicleService";
+import * as vehicleApi from "../../services/vehicleService";
 
 import Spinner from "../common/Spinner";
 
@@ -17,11 +17,16 @@ const MyVehicles = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.getMyVehicles(user.uid).then((response) => {
+        vehicleApi.getMyVehicles(user.uid).then((response) => {
             setVehicles(response);
             setLoading(false);
         });
     }, [user.uid]);
+
+    const deleteVehicleHandler = async (id) => {
+        await vehicleApi.deleteVehicle(id);
+        setVehicles([...vehicles].filter((x) => x.id !== id));
+    };
 
     return (
         <Row>
@@ -42,6 +47,14 @@ const MyVehicles = () => {
                                     <Card.Body>
                                         <Card.Title>
                                             {x.brand} - {x.model}
+                                            <button
+                                                type='button'
+                                                className='btn-close float-end'
+                                                aria-label='Close'
+                                                data-bs-toggle='tooltip'
+                                                data-bs-placement='top'
+                                                title='Delete vehicle'
+                                                onClick={() => deleteVehicleHandler(x.id)}></button>
                                         </Card.Title>
                                         <Card.Text>
                                             {x.year} <br /> {x.engine}

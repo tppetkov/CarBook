@@ -5,10 +5,12 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import * as fuelApi from "../../services/fuelService";
 import * as statisticsApi from "../../services/statisticsService";
 
+import "./addFuel.scss";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import fuelImg from "../../images/addFuel.jpg";
 
 const AddFuel = () => {
     const [previousReading, setPreviousReading] = useState({});
@@ -45,7 +47,7 @@ const AddFuel = () => {
     const calculateDistance = (e) => {
         setError(null);
         let currentOdometer = e.target.value;
-        if (Object.entries(previousReading).length > 0) {
+        if (previousReading && Object.entries(previousReading).length > 0) {
             let currentDistance = currentOdometer - previousReading.odometer;
 
             setDistance(currentDistance);
@@ -57,40 +59,66 @@ const AddFuel = () => {
 
     return (
         <Row>
-            <Col md='12'>
-                <Form onSubmit={onAddFuelFormSubmitHandler}>
-                    <Form.Group className='mb-3'>
-                        <Form.Label>OdoMeter</Form.Label>
-                        <Form.Control type='number' required name='odometer' onBlur={calculateDistance} />
-                    </Form.Group>
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Distance</Form.Label>
-                        <Form.Control type='number' disabled value={distance} />
-                    </Form.Group>
-                    {error ? (
-                        <Form.Control.Feedback type='invalid' style={{ display: "block" }}>
-                            {error.message}
-                        </Form.Control.Feedback>
-                    ) : null}
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Fuel [l]</Form.Label>
-                        <Form.Control type='decimal' required name='fuel' />
-                    </Form.Group>
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Cost</Form.Label>
-                        <Form.Control type='decimal' required name='cost' />
-                    </Form.Group>
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Full Tank</Form.Label>
-                        <Form.Check type='checkbox' name='isfulltank' />
-                    </Form.Group>
-                    <Button variant='primary' type='submit'>
-                        Add
-                    </Button>
-                    <Button variant='secondary' className='ms-2' onClick={() => navigate(-1)}>
-                        Cancel
-                    </Button>
+            <Col md='6'>
+                <Form onSubmit={onAddFuelFormSubmitHandler} className='add-fuel-form'>
+                    <fieldset className='border'>
+                        <legend className='w-auto text-center'>Add fuel</legend>
+                        <Form.Group className='mb-3' as={Row}>
+                            <Form.Label column sm='2'>
+                                OdoMeter
+                            </Form.Label>
+                            <Col sm='10'>
+                                <Form.Control type='number' required name='odometer' onBlur={calculateDistance} />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group className='mb-3' as={Row}>
+                            <Form.Label column sm='2'>
+                                Distance
+                            </Form.Label>
+                            <Col sm='10'>
+                                <Form.Control type='number' disabled value={distance} />
+                            </Col>
+                        </Form.Group>
+                        {error ? (
+                            <Form.Control.Feedback type='invalid' style={{ display: "block" }}>
+                                {error.message}
+                            </Form.Control.Feedback>
+                        ) : null}
+                        <Form.Group className='mb-3' as={Row}>
+                            <Form.Label column sm='2'>
+                                Fuel [l]
+                            </Form.Label>
+                            <Col sm='10'>
+                                <Form.Control type='decimal' required name='fuel' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group className='mb-3' as={Row}>
+                            <Form.Label column sm='2'>
+                                Cost
+                            </Form.Label>
+                            <Col sm='10'>
+                                <Form.Control type='decimal' required name='cost' />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group className='mb-3' as={Row}>
+                            <Form.Label column sm='2'>
+                                Full Tank
+                            </Form.Label>
+                            <Col sm='10'>
+                                <Form.Check type='checkbox' name='isfulltank' />
+                            </Col>
+                        </Form.Group>
+                        <Button variant='primary' type='submit'>
+                            Add
+                        </Button>
+                        <Button variant='secondary' className='ms-2' onClick={() => navigate(-1)}>
+                            Cancel
+                        </Button>
+                    </fieldset>
                 </Form>
+            </Col>
+            <Col md='6'>
+                <img src={fuelImg} className='img-fluid' alt='Add fuel' />
             </Col>
         </Row>
     );

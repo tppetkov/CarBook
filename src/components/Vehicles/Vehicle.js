@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as fuelApi from "../../services/fuelService";
 import * as vehicleApi from "../../services/vehicleService";
@@ -23,15 +23,19 @@ const Vehicle = () => {
     const params = useParams();
     let vehicleid = params.vehicleid;
 
-    useEffect(() => {
+    const getCurrentVehicleStats = useCallback(() => {
         vehicleApi.getVehicleById(vehicleid).then((result) => setCurrentVehicle(result));
+    }, [vehicleid]);
+
+    useEffect(() => {
+        getCurrentVehicleStats();
         fuelApi.getFuelReadingsByVehicle(vehicleid).then((result) => {
             if (result) {
                 setFuelReadings(result.sort((a, b) => b.odometer - a.odometer));
             }
             setLoading(false);
         });
-    }, [vehicleid]);
+    }, [vehicleid, getCurrentVehicleStats]);
 
     const onEditHandler = (x) => {
         setEditingRecord(x);
@@ -46,13 +50,31 @@ const Vehicle = () => {
     const onEditFuelFormHandler = async (e, id) => {
         e.preventDefault();
         const { odometer, fuel, cost, isfulltank } = e.target;
-        await fuelApi.editFuel(id, odometer.value, fuel.value, cost.value, isfulltank.checked);
+        let previousState = fuelReadings[0];
+        let previousReading = fuelReadings[1];
+        let updatedProperties = await fuelApi.editFuel(
+            id,
+            odometer.value,
+            fuel.value,
+            cost.value,
+            isfulltank.checked,
+            previousState,
+            previousReading
+        );
         let updatedFuelReadings = [...fuelReadings].map((x) =>
             x.id === id
-                ? { ...x, odometer: odometer.value, fuel: fuel.value, cost: cost.value, isfulltank: isfulltank.checked }
+                ? {
+                      ...x,
+                      odometer: updatedProperties.odometer,
+                      fuel: updatedProperties.fuel,
+                      cost: updatedProperties.cost,
+                      isfulltank: updatedProperties.isfulltank,
+                      consumption: updatedProperties.consumption,
+                  }
                 : x
         );
         setFuelReadings(updatedFuelReadings.sort((a, b) => b.odometer - a.odometer));
+        getCurrentVehicleStats();
         handleClose();
     };
     const handleClose = () => setShow(false);
@@ -71,6 +93,9 @@ const Vehicle = () => {
                         </Badge>
                         <Badge bg='secondary' className='ms-3'>
                             {currentVehicle?.totalCost} $
+                        </Badge>
+                        <Badge bg='secondary' className='ms-3'>
+                            {(currentVehicle?.totalCost / currentVehicle?.totalFuel).toFixed(3)} $/L
                         </Badge>
                     </h3>
                 </div>
@@ -111,9 +136,11 @@ const Vehicle = () => {
                                         </td>
                                         <td>{x.consumption}</td>
                                         <td>
-                                            <Button variant='primary' size='sm' onClick={() => onEditHandler(x)}>
-                                                Edit
-                                            </Button>{" "}
+                                            {i === 0 ? (
+                                                <Button variant='primary' size='sm' onClick={() => onEditHandler(x)}>
+                                                    Edit
+                                                </Button>
+                                            ) : null}{" "}
                                             <Button variant='secondary' size='sm' onClick={() => onDeleteHandler(x.id)}>
                                                 Delete
                                             </Button>

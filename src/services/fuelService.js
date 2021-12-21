@@ -63,10 +63,36 @@ export const getLastFuelReadingByVehicle = async (vehicleid) => {
     }
 };
 
-export const editFuel = async (id, odometer, fuel, cost, isfulltank) => {
+export const editFuel = async (id, odometer, fuel, cost, isfulltank, previousState, previousReading) => {
     const fuelDoc = doc(db, "fuelReadings", id);
-    const newFields = { odometer: odometer, fuel: fuel, cost: cost, isfulltank: isfulltank };
+    let currentConsumption = null;
+    if (isfulltank) {
+        if (previousReading?.isfulltank) {
+            currentConsumption = ((fuel * 100) / (odometer - previousReading.odometer)).toFixed(3);
+        }
+    }
+    const newFields = {
+        odometer: odometer,
+        fuel: fuel,
+        cost: cost,
+        isfulltank: isfulltank,
+        consumption: currentConsumption,
+    };
+
     await updateDoc(fuelDoc, newFields);
+
+    let vehicleToUpdate = {
+        vehicleid: previousState.vehicleid,
+        fuel: fuel - previousState.fuel,
+        cost: cost - previousState.cost,
+    };
+    if (currentConsumption) {
+        vehicleToUpdate.consumption = currentConsumption;
+    }
+
+    await updateVehicle(vehicleToUpdate);
+
+    return newFields;
 };
 
 export const deleteFuel = async (id) => {

@@ -6,7 +6,7 @@ import * as api from "../../services/vehicleService";
 import * as statistics from "../../services/statisticsService";
 
 import * as constants from "../../data/Constants";
-
+import "./addVehicle.scss";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
@@ -39,8 +39,8 @@ const AddVehicle = () => {
 
     return (
         <Row>
-            <Col md='12'>
-                <Form onSubmit={onAddVehicleFormSubmitHandler}>
+            <Col md='6'>
+                <Form onSubmit={onAddVehicleFormSubmitHandler} className='add-vehicle-form mt-5'>
                     <Form.Group className='mb-3'>
                         <Form.Label>Brand</Form.Label>
                         <Form.Select aria-label='Select Brand' onChange={onBrandChangeHandler} name='brand'>

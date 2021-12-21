@@ -1,5 +1,5 @@
 import { db } from "../firebase-config";
-import { collection, addDoc, doc, getDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, updateDoc, deleteDoc, getDocs, query, where } from "firebase/firestore";
 
 const vehiclesCollectionRef = collection(db, "vehicles");
 
@@ -55,4 +55,9 @@ export const getVehicleById = async (id) => {
     let vehicle = vehicleDoc.data();
 
     return vehicle;
+};
+
+export const deleteVehicle = async (id) => {
+    let vehicleRef = doc(db, "vehicles", id);
+    await deleteDoc(vehicleRef);
 };
