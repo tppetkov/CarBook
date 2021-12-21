@@ -15,7 +15,7 @@ import fuelImg from "../../images/addFuel.jpg";
 const AddFuel = () => {
     const [previousReading, setPreviousReading] = useState({});
     const [distance, setDistance] = useState(0);
-    const [error, setError] = useState({});
+    const [errors, setErrors] = useState([]);
     const navigate = useNavigate();
     const params = useParams();
     const { user } = useAuthContext();
@@ -27,10 +27,11 @@ const AddFuel = () => {
 
     const onAddFuelFormSubmitHandler = async (e) => {
         e.preventDefault();
-        if (error) {
+        const { odometer, fuel, cost, isfulltank } = e.target;
+        //validateForm(fuel.value, cost.value);
+        if (errors.length > 0) {
             return;
         }
-        const { odometer, fuel, cost, isfulltank } = e.target;
         await fuelApi.addFuel(
             odometer.value,
             distance,
@@ -45,15 +46,40 @@ const AddFuel = () => {
     };
 
     const calculateDistance = (e) => {
-        setError(null);
         let currentOdometer = e.target.value;
         if (previousReading && Object.entries(previousReading).length > 0) {
             let currentDistance = currentOdometer - previousReading.odometer;
 
             setDistance(currentDistance);
             if (currentDistance <= 0) {
-                setError({ message: "You have enter an invalid odometer value!" });
+                if (errors.filter((e) => e.key === "distance").length === 0) {
+                    setErrors([...errors, { key: "distance", message: "You have enter an invalid odometer value!" }]);
+                }
+            } else {
+                setErrors([...errors].filter((x) => x.key !== "distance"));
             }
+        }
+    };
+
+    const validateFuel = (e) => {
+        let fuel = e.target.value;
+        if (isNaN(parseFloat(fuel)) || fuel <= 0) {
+            if (errors.filter((e) => e.key === "fuel").length === 0) {
+                setErrors([...errors, { key: "fuel", message: "You have enter an invalid fuel value!" }]);
+            }
+        } else {
+            setErrors([...errors].filter((x) => x.key !== "fuel"));
+        }
+    };
+
+    const validateCost = (e) => {
+        let cost = e.target.value;
+        if (isNaN(parseFloat(cost)) || cost <= 0) {
+            if (errors.filter((e) => e.key === "cost").length === 0) {
+                setErrors([...errors, { key: "cost", message: "You have enter an invalid cost value!" }]);
+            }
+        } else {
+            setErrors([...errors].filter((x) => x.key !== "cost"));
         }
     };
 
@@ -63,6 +89,13 @@ const AddFuel = () => {
                 <Form onSubmit={onAddFuelFormSubmitHandler} className='add-fuel-form'>
                     <fieldset className='border'>
                         <legend className='w-auto text-center'>Add fuel</legend>
+                        {errors.length > 0
+                            ? errors.map((error) => (
+                                  <Form.Control.Feedback type='invalid' style={{ display: "block" }} key={error.key}>
+                                      {error.message}
+                                  </Form.Control.Feedback>
+                              ))
+                            : null}
                         <Form.Group className='mb-3' as={Row}>
                             <Form.Label column sm='2'>
                                 OdoMeter
@@ -79,17 +112,12 @@ const AddFuel = () => {
                                 <Form.Control type='number' disabled value={distance} />
                             </Col>
                         </Form.Group>
-                        {error ? (
-                            <Form.Control.Feedback type='invalid' style={{ display: "block" }}>
-                                {error.message}
-                            </Form.Control.Feedback>
-                        ) : null}
                         <Form.Group className='mb-3' as={Row}>
                             <Form.Label column sm='2'>
                                 Fuel [l]
                             </Form.Label>
                             <Col sm='10'>
-                                <Form.Control type='decimal' required name='fuel' />
+                                <Form.Control type='decimal' required name='fuel' onBlur={validateFuel} />
                             </Col>
                         </Form.Group>
                         <Form.Group className='mb-3' as={Row}>
@@ -97,7 +125,7 @@ const AddFuel = () => {
                                 Cost
                             </Form.Label>
                             <Col sm='10'>
-                                <Form.Control type='decimal' required name='cost' />
+                                <Form.Control type='decimal' required name='cost' onBlur={validateCost} />
                             </Col>
                         </Form.Group>
                         <Form.Group className='mb-3' as={Row}>
