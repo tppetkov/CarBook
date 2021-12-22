@@ -13,6 +13,7 @@ import MyVehicles from "./components/Vehicles/MyVehicles";
 import AddVehicle from "./components/Vehicles/AddVehicle";
 import Vehicle from "./components/Vehicles/Vehicle";
 import AddFuel from "./components/FuelReadings/AddFuel";
+import NotFound from "./components/common/NotFound";
 
 import "./App.scss";
 
@@ -27,7 +28,8 @@ function App() {
                     <Container fluid='md'>
                         <Container>
                             <Routes>
-                                <Route path='/' element={<Home />} exact />
+                                <Route path='*' element={<NotFound />} />
+                                <Route path='/' element={<Home />} />
                                 <Route path='login' element={<Login />} />
                                 <Route path='register' element={<Register />} />
                                 <Route path='logout' element={<Logout />} />
