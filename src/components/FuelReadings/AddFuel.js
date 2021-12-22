@@ -47,6 +47,13 @@ const AddFuel = () => {
 
     const calculateDistance = (e) => {
         let currentOdometer = e.target.value;
+        if (isNaN(currentOdometer)) {
+            if (errors.filter((e) => e.key === "distance").length === 0) {
+                setErrors([...errors, { key: "distance", message: "You have enter an invalid odometer value!" }]);
+            }
+
+            return;
+        }
         if (previousReading && Object.entries(previousReading).length > 0) {
             let currentDistance = currentOdometer - previousReading.odometer;
 
@@ -63,7 +70,7 @@ const AddFuel = () => {
 
     const validateFuel = (e) => {
         let fuel = e.target.value;
-        if (isNaN(parseFloat(fuel)) || fuel <= 0) {
+        if (isNaN(fuel) || fuel <= 0) {
             if (errors.filter((e) => e.key === "fuel").length === 0) {
                 setErrors([...errors, { key: "fuel", message: "You have enter an invalid fuel value!" }]);
             }
@@ -74,7 +81,7 @@ const AddFuel = () => {
 
     const validateCost = (e) => {
         let cost = e.target.value;
-        if (isNaN(parseFloat(cost)) || cost <= 0) {
+        if (isNaN(cost) || cost <= 0) {
             if (errors.filter((e) => e.key === "cost").length === 0) {
                 setErrors([...errors, { key: "cost", message: "You have enter an invalid cost value!" }]);
             }

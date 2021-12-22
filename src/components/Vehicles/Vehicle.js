@@ -18,6 +18,7 @@ const Vehicle = () => {
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
     const [editingRecord, setEditingRecord] = useState(false);
+    const [errors, setErrors] = useState([]);
 
     const navigate = useNavigate();
     const params = useParams();
@@ -77,7 +78,49 @@ const Vehicle = () => {
         getCurrentVehicleStats();
         handleClose();
     };
+
     const handleClose = () => setShow(false);
+
+    const validateOdometer = (e) => {
+        let odometer = e.target.value;
+        if (isNaN(odometer)) {
+            if (errors.filter((e) => e.key === "fuel").length === 0) {
+                setErrors([...errors, { key: "fuel", message: "You have enter an invalid fuel value!" }]);
+
+                return;
+            }
+        }
+        let previousReading = fuelReadings[1];
+        let currentDistance = odometer - previousReading.odometer;
+        if (currentDistance <= 0) {
+            if (errors.filter((e) => e.key === "distance").length === 0) {
+                setErrors([...errors, { key: "distance", message: "You have enter an invalid odometer value!" }]);
+            }
+        } else {
+            setErrors([...errors].filter((x) => x.key !== "distance"));
+        }
+    };
+
+    const validateFuel = (e) => {
+        let fuel = e.target.value;
+        if (isNaN(fuel) || fuel <= 0) {
+            if (errors.filter((e) => e.key === "fuel").length === 0) {
+                setErrors([...errors, { key: "fuel", message: "You have enter an invalid fuel value!" }]);
+            }
+        } else {
+            setErrors([...errors].filter((x) => x.key !== "fuel"));
+        }
+    };
+    const validateCost = (e) => {
+        let cost = e.target.value;
+        if (isNaN(cost) || cost <= 0) {
+            if (errors.filter((e) => e.key === "cost").length === 0) {
+                setErrors([...errors, { key: "cost", message: "You have enter an invalid cost value!" }]);
+            }
+        } else {
+            setErrors([...errors].filter((x) => x.key !== "cost"));
+        }
+    };
 
     return (
         <Row>
@@ -154,6 +197,10 @@ const Vehicle = () => {
                             show={show}
                             handleClose={handleClose}
                             onEditFuelFormHandler={onEditFuelFormHandler}
+                            errors={errors}
+                            validateOdometer={validateOdometer}
+                            validateFuel={validateFuel}
+                            validateCost={validateCost}
                         />
                     </>
                 ) : (

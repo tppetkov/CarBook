@@ -71,12 +71,14 @@ export const editFuel = async (id, odometer, fuel, cost, isfulltank, previousSta
             currentConsumption = ((fuel * 100) / (odometer - previousReading.odometer)).toFixed(3);
         }
     }
+    let distance = odometer - previousReading.odometer;
     const newFields = {
         odometer: odometer,
         fuel: fuel,
         cost: cost,
         isfulltank: isfulltank,
         consumption: currentConsumption,
+        distance: distance,
     };
 
     await updateDoc(fuelDoc, newFields);
