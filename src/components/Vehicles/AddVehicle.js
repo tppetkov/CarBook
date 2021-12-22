@@ -26,7 +26,7 @@ const AddVehicle = () => {
 
     const onAddVehicleFormSubmitHandler = async (e) => {
         e.preventDefault();
-        if (error) {
+        if (error && Object.entries(error).length > 0) {
             return;
         }
         const { brand, model, year, engine } = e.target;
@@ -87,7 +87,7 @@ const AddVehicle = () => {
                     <Form.Group className='mb-3'>
                         <Form.Label>Engine</Form.Label>
                         <Form.Select aria-label='Select Engine' name='engine'>
-                            <option>Select Engine</option>
+                            <option value=''>Select Engine</option>
                             {constants.engineTypes.map((x, i) => (
                                 <option value={x} key={i}>
                                     {x}

@@ -9,10 +9,13 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import DeleteConfirmation from "../common/DeleteConfirmation";
 
 const MyVehicles = () => {
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [show, setShow] = useState(false);
+    const [recordForDeletion, setRecordForDeletion] = useState("");
     const { user } = useAuthContext();
     const navigate = useNavigate();
 
@@ -23,10 +26,19 @@ const MyVehicles = () => {
         });
     }, [user.uid]);
 
-    const deleteVehicleHandler = async (id) => {
-        await vehicleApi.deleteVehicle(id);
-        setVehicles([...vehicles].filter((x) => x.id !== id));
+    const handleDelete = async () => {
+        await vehicleApi.deleteVehicle(recordForDeletion);
+        setVehicles([...vehicles].filter((x) => x.id !== recordForDeletion));
+        setRecordForDeletion();
+        handleClose();
     };
+
+    const onDeleteClickHandler = (id) => {
+        setRecordForDeletion(id);
+        setShow(true);
+    };
+
+    const handleClose = () => setShow(false);
 
     return (
         <Row>
@@ -41,6 +53,7 @@ const MyVehicles = () => {
                             onClick={() => navigate("/myvehicles/add")}>
                             Add new vehicle
                         </Button>
+                        <DeleteConfirmation show={show} handleClose={handleClose} onDelete={handleDelete} />
                         <div className='d-flex flex-row flex-wrap mt-3'>
                             {vehicles.map((x) => (
                                 <Card style={{ width: "18rem" }} className='me-5 mt-3' key={x.id}>
@@ -54,7 +67,7 @@ const MyVehicles = () => {
                                                 data-bs-toggle='tooltip'
                                                 data-bs-placement='top'
                                                 title='Delete vehicle'
-                                                onClick={() => deleteVehicleHandler(x.id)}></button>
+                                                onClick={() => onDeleteClickHandler(x.id)}></button>
                                         </Card.Title>
                                         <Card.Text>
                                             {x.year} <br /> {x.engine}
